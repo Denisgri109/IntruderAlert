@@ -2,6 +2,7 @@
 
 **Name:** Denis Grinevicius 
 **Student ID:** D00283068 
+**GitHub:** https://github.com/Denisgri109/IntruderAlert
 
 ---
 

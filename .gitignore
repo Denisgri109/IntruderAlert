@@ -1,0 +1,12 @@
+Backend/.env
+Database/.env
+Frontend/.env
+Hardware/.env
+.env
+__pycache__/
+*.db
+/Backend/Database/__pycache__
+/Backend/__pycache__
+/.vscode
+.vscode/sftp.json
+
