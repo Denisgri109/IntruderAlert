@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intruder Alert</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        
+<main class="error-page">
+    <h1 class="error-code">{{ status_code }}</h1>
+    <p class="error-message">{{ message }}</p>
+    <a href="/" class="btn btn-outline">Back Home</a>
+</main>
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intruder Alert</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        
+<header>
+    <h1>Register</h1>
+</header>
+<main>
+    <form action="/register" method="post" class="security-form">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <div class="form-group">
+            <label for="passwordConfirmation">Confirm Password</label>
+            <input type="password" id="passwordConfirmation" name="passwordConfirmation" required>
+        </div>
+        <button type="submit" class="btn btn-block">Register</button>
+    </form>
+    <div class="form-footer">
+        <a href="/">Back to Home</a>
+    </div>
+</main>
+
+    </div>
+</body>
+</html>

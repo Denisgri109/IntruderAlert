@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intruder Alert</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        
+<header class="dashboard-header">
+    <h1>Welcome, {{ user.username }}</h1>
+    <a href="/logout" class="btn-logout">Log out</a>
+</header>
+<main class="dashboard-main">
+    <section class="add-device card">
+        <h2>Add Device</h2>
+        <form action="/device/add" method="post" class="inline-form">
+            <input type="text" name="name" placeholder="Device Name" required>
+            <input type="text" name="device_code" placeholder="Device Code" required>
+            <button type="submit" class="btn btn-small">Add Device</button>
+        </form>
+    </section>
+
+    <section class="devices-list">
+        <h2>Your Devices</h2>
+        <div class="grid">
+            {% for device in devices %}
+            <div class="card device-card">
+                <div class="device-header">
+                    <h3>{{ device.name }}</h3>
+                    <span class="status-indicator {{ 'online' if device.is_online else 'offline' }}">
+                        {{ 'Online' if device.is_online else 'Offline' }}
+                    </span>
+                </div>
+                <p class="device-mode">Current Mode: <strong>{{ device.mode }}</strong></p>
+                
+                <div class="device-controls">
+                    <form action="/device/{{ device.id }}/mode" method="post" class="control-form">
+                        <label>Mode:</label>
+                        <select name="mode">
+                            <option value="schedule">Schedule</option>
+                            <option value="on">On</option>
+                            <option value="off">Off</option>
+                        </select>
+                        <button type="submit" class="btn btn-small btn-outline">Set</button>
+                    </form>
+
+                    <form action="/device/{{ device.id }}/schedule" method="post" class="control-form">
+                        <label>Schedule:</label>
+                        <input type="time" name="start_time" required>
+                        <span>to</span>
+                        <input type="time" name="end_time" required>
+                        <button type="submit" class="btn btn-small btn-outline">Set</button>
+                    </form>
+
+                    <form action="/device/{{ device.id }}/alarm" method="post" class="control-form alarm-form">
+                        <button type="submit" name="action" value="sound" class="btn btn-small btn-danger">Sound</button>
+                        <button type="submit" name="action" value="stop" class="btn btn-small btn-safe">Stop</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="alerts-list">
+        <h2>Alerts</h2>
+        <div class="alerts-container">
+            {% for alert in alerts %}
+            <div class="alert-item type-{{ alert.alert_type }}">
+                <div class="alert-info">
+                    <span class="timestamp">{{ alert.timestamp }}</span>
+                    <p class="message">{{ alert.message }}</p>
+                </div>
+                <form action="/alert/{{ alert.id }}/acknowledge" method="post">
+                    <button type="submit" class="btn btn-small">Mark as seen</button>
+                </form>
+            </div>
+            {% endfor %}
+            {% if not alerts %}
+            <p>No recent alerts.</p>
+            {% endif %}
+        </div>
+    </section>
+</main>
+
+    </div>
+</body>
+</html>
