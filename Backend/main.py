@@ -1,12 +1,14 @@
 from pathlib import Path
 from typing import Annotated
+import json
+import secrets
 import bcrypt
 import os
 import jwt
 from dotenv import load_dotenv
 from datetime import datetime, timedelta, timezone
 
-from fastapi import FastAPI, Request, HTTPException, status, Depends, Form
+from fastapi import FastAPI, Request, HTTPException, status, Depends, Form, WebSocket, WebSocketDisconnect
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.exceptions import RequestValidationError
@@ -20,16 +22,21 @@ from Database.database import Base, engine, get_db
 
 load_dotenv()
 
-# app will crash on startup if this is missing in .env
+# app will crash on startup if these are missing in .env
 SECRET_KEY = os.environ["SECRET_KEY"]
+PI_SECRET_KEY = os.environ["PI_SECRET_KEY"]
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
-    # Create database tables
+# Create database tables
 Base.metadata.create_all(bind=engine)
 
+# Hide the API documentation pages
 app = FastAPI(
     title="Intruder Alert",
+    docs_url=None,
+    redoc_url=None,
+    openapi_url=None
 )
 
 FRONTEND_DIRECTORY = Path(__file__).resolve().parent.parent / "Frontend"
@@ -55,6 +62,48 @@ def get_current_user(request: Request, db: Annotated[Session, Depends(get_db)]):
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     return user
+
+
+# kept in memory, it resets to offline whenever the server restarts
+pi_state = {
+    "online": False,
+    "motion": False,
+    "light_level": None,
+    "last_seen": None,
+}
+
+
+@app.websocket("/ws/pi")
+async def pi_connection(websocket: WebSocket):
+    sent_key = websocket.headers.get("X-Pi-Secret", "")
+    if not secrets.compare_digest(sent_key, PI_SECRET_KEY):
+        await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
+        return
+
+    await websocket.accept()
+    pi_state["online"] = True
+
+    try:
+        while True:
+            data = await websocket.receive_text()
+            try:
+                reading = json.loads(data)
+                # only take the values we expect, so the Pi can't overwrite anything else
+                pi_state["motion"] = bool(reading.get("motion", False))
+                pi_state["light_level"] = reading.get("light_level")
+            except (json.JSONDecodeError, AttributeError):
+                pass
+            pi_state["last_seen"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    except WebSocketDisconnect:
+        pass
+    finally:
+        pi_state["online"] = False
+
+
+@app.get("/api/status", dependencies=[Depends(get_current_user)])
+def get_pi_status():
+    return pi_state
 
 
 @app.get("/", include_in_schema=False, name="home")
@@ -85,7 +134,7 @@ def dashboard_page(
     return templates.TemplateResponse(
         request,
         "dashboard.html",
-        {"title": "Dashboard", "user": current_user, "alerts": alerts, "schedule": schedule},
+        {"title": "Dashboard", "user": current_user, "alerts": alerts, "schedule": schedule, "pi_online": pi_state["online"]},
     )
 
 

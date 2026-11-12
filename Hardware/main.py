@@ -1,7 +1,6 @@
 import asyncio
 import json
 import os
-import time
 import websockets
 from dotenv import load_dotenv
 from gpiozero import MotionSensor, MCP3008, Buzzer, LED
@@ -24,18 +23,27 @@ def read_sensors():
     }
 
 
-def main():
-    print("Checking sensors. Press Ctrl+C to stop.")
+async def send_readings(websocket):
     while True:
-        reading = read_sensors()
-        motion_text = "yes" if reading["motion"] else "no"
-        print(f"Motion: {motion_text} | Light level: {reading['light_level']}")
-        time.sleep(1)
+        await websocket.send(json.dumps(read_sensors()))
+        await asyncio.sleep(1)
+
+
+async def main():
+    while True:
+        try:
+            print(f"Connecting to {SERVER_URL}...")
+            async with websockets.connect(SERVER_URL, additional_headers={"X-Pi-Secret": PI_SECRET_KEY}) as ws:
+                print("Successfully connected to Intruder Alert backend!")
+                await send_readings(ws)
+        except Exception as e:
+            print(f"Connection failed ({e}). Retrying in 5 seconds...")
+            await asyncio.sleep(5)
 
 
 if __name__ == "__main__":
     try:
-        main()
+        asyncio.run(main())
     except KeyboardInterrupt:
         print("Stopping sensors...")
     finally:
