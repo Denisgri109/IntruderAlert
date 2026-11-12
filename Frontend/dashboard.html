@@ -3,87 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Intruder Alert</title>
+    <title>Intruder Alert | Smart Security</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', path='styles.css') }}">
 </head>
 <body>
-    <div class="container">
+    <div class="app-container">
         
-<header class="dashboard-header">
-    <h1>Welcome, {{ user.username }}</h1>
-    <a href="/logout" class="btn-logout">Log out</a>
+<header class="app-header">
+    <div class="brand">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-accent"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+        <h2>Dashboard</h2>
+    </div>
+    <div class="user-controls">
+        <span class="greeting">Welcome, <strong>{{ user.username }}</strong></span>
+        <a href="/logout" class="btn btn-outline btn-sm">Log out</a>
+    </div>
 </header>
-<main class="dashboard-main">
-    <section class="add-device card">
-        <h2>Add Device</h2>
-        <form action="/device/add" method="post" class="inline-form">
-            <input type="text" name="name" placeholder="Device Name" required>
-            <input type="text" name="device_code" placeholder="Device Code" required>
-            <button type="submit" class="btn btn-small">Add Device</button>
-        </form>
-    </section>
 
-    <section class="devices-list">
-        <h2>Your Devices</h2>
-        <div class="grid">
-            {% for device in devices %}
+<main class="dashboard-grid">
+    <div class="dashboard-main-col">
+        <section class="alarm-section">
+            <div class="section-header">
+                <h3>Alarm</h3>
+                <span class="badge">Raspberry Pi</span>
+            </div>
             <div class="card device-card">
                 <div class="device-header">
-                    <h3>{{ device.name }}</h3>
-                    <span class="status-indicator {{ 'online' if device.is_online else 'offline' }}">
-                        {{ 'Online' if device.is_online else 'Offline' }}
+                    <div class="device-title-wrapper">
+                        <div class="status-dot {{ 'online' if pi_online else 'offline' }}"></div>
+                        <h4>Intruder Alarm</h4>
+                    </div>
+                    <span class="status-badge {{ 'online' if pi_online else 'offline' }}">
+                        {{ 'Online' if pi_online else 'Offline' }}
                     </span>
                 </div>
-                <p class="device-mode">Current Mode: <strong>{{ device.mode }}</strong></p>
-                
-                <div class="device-controls">
-                    <form action="/device/{{ device.id }}/mode" method="post" class="control-form">
-                        <label>Mode:</label>
-                        <select name="mode">
-                            <option value="schedule">Schedule</option>
-                            <option value="on">On</option>
-                            <option value="off">Off</option>
-                        </select>
-                        <button type="submit" class="btn btn-small btn-outline">Set</button>
+                <div class="device-info">
+                    <p class="text-muted text-sm">Mode: <strong class="text-main">{{ schedule.mode if schedule else 'schedule' }}</strong></p>
+                    <div class="button-group mt-2">
+                        <a href="/mode" class="btn btn-outline btn-xs">Mode page</a>
+                        <a href="/schedule" class="btn btn-outline btn-xs">Schedule page</a>
+                    </div>
+                </div>
+
+                <div class="device-controls mt-3">
+                    <form action="/mode" method="post" class="control-form">
+                        <label>Mode</label>
+                        <div class="input-group">
+                            <select name="mode" class="flex-1">
+                                <option value="schedule">Schedule</option>
+                                <option value="on">On (Armed)</option>
+                                <option value="off">Off (Disarmed)</option>
+                            </select>
+                            <button type="submit" class="btn btn-outline btn-sm">Set</button>
+                        </div>
                     </form>
 
-                    <form action="/device/{{ device.id }}/schedule" method="post" class="control-form">
-                        <label>Schedule:</label>
-                        <input type="time" name="start_time" required>
-                        <span>to</span>
-                        <input type="time" name="end_time" required>
-                        <button type="submit" class="btn btn-small btn-outline">Set</button>
+                    <form action="/schedule" method="post" class="control-form">
+                        <label>Schedule</label>
+                        <div class="input-group time-group">
+                            <input type="time" name="start_time" required>
+                            <span class="text-muted">-</span>
+                            <input type="time" name="end_time" required>
+                            <button type="submit" class="btn btn-outline btn-sm">Set</button>
+                        </div>
                     </form>
 
-                    <form action="/device/{{ device.id }}/alarm" method="post" class="control-form alarm-form">
-                        <button type="submit" name="action" value="sound" class="btn btn-small btn-danger">Sound</button>
-                        <button type="submit" name="action" value="stop" class="btn btn-small btn-safe">Stop</button>
+                    <form action="/alarm" method="post" class="control-form alarm-actions">
+                        <button type="submit" name="action" value="sound" class="btn btn-danger flex-1">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                            Sound Alarm
+                        </button>
+                        <button type="submit" name="action" value="stop" class="btn btn-safe flex-1">Stop</button>
                     </form>
                 </div>
             </div>
-            {% endfor %}
-        </div>
-    </section>
+        </section>
+    </div>
 
-    <section class="alerts-list">
-        <h2>Alerts</h2>
-        <div class="alerts-container">
-            {% for alert in alerts %}
-            <div class="alert-item type-{{ alert.alert_type }}">
-                <div class="alert-info">
-                    <span class="timestamp">{{ alert.timestamp }}</span>
-                    <p class="message">{{ alert.message }}</p>
-                </div>
-                <form action="/alert/{{ alert.id }}/acknowledge" method="post">
-                    <button type="submit" class="btn btn-small">Mark as seen</button>
-                </form>
+    <aside class="dashboard-side-col">
+        <section class="card alerts-card h-100">
+            <div class="section-header">
+                <h3>Activity Log</h3>
+                <span class="badge badge-subtle">Live</span>
             </div>
-            {% endfor %}
-            {% if not alerts %}
-            <p>No recent alerts.</p>
-            {% endif %}
-        </div>
-    </section>
+            <div class="alerts-container">
+                {% for alert in alerts %}
+                <div class="alert-item type-{{ alert.alert_type }}">
+                    <div class="alert-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                    </div>
+                    <div class="alert-content">
+                        <span class="timestamp">{{ alert.timestamp }}</span>
+                        <p class="message">{{ alert.message }}</p>
+                        <form action="/alert/{{ alert.id }}/acknowledge" method="post" class="mt-2">
+                            <button type="submit" class="btn btn-xs btn-outline">Mark as seen</button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+                {% if not alerts %}
+                <div class="empty-state">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    <p>All clear. No recent alerts.</p>
+                </div>
+                {% endif %}
+            </div>
+        </section>
+    </aside>
 </main>
 
     </div>

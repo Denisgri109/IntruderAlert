@@ -3,39 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Intruder Alert</title>
+    <title>Intruder Alert | Smart Security</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', path='styles.css') }}">
 </head>
 <body>
-    <div class="container">
+    <div class="app-container">
         
-<header>
-    <h1>Register</h1>
-</header>
-<main>
-    <form action="/register" method="post" class="security-form">
-        <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username" required>
+<div class="center-wrapper">
+    <main class="card auth-card">
+        <div class="auth-header">
+            <div class="brand-icon-small">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            </div>
+            <h1>Register</h1>
         </div>
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" required>
+        <form action="/register" method="post" class="security-form">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" placeholder="Choose a username" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="you@example.com" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Create a strong password" required>
+            </div>
+            <div class="form-group">
+                <label for="passwordConfirmation">Confirm Password</label>
+                <input type="password" id="passwordConfirmation" name="passwordConfirmation" placeholder="Repeat your password" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block mt-4">Register</button>
+        </form>
+        <div class="form-footer">
+            <a href="/" class="link-subtle">← Back to Home</a>
         </div>
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" required>
-        </div>
-        <div class="form-group">
-            <label for="passwordConfirmation">Confirm Password</label>
-            <input type="password" id="passwordConfirmation" name="passwordConfirmation" required>
-        </div>
-        <button type="submit" class="btn btn-block">Register</button>
-    </form>
-    <div class="form-footer">
-        <a href="/">Back to Home</a>
-    </div>
-</main>
+    </main>
+</div>
 
     </div>
 </body>

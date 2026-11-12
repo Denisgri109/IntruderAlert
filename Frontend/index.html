@@ -3,22 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Intruder Alert</title>
+    <title>Intruder Alert | Smart Security</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', path='styles.css') }}">
 </head>
 <body>
-    <div class="container">
+    <div class="app-container">
         
-<header>
-    <h1>Intruder Alert</h1>
-</header>
-<main class="intro-section">
-    <p>Welcome to the Intruder Alert home security system. Monitor and control your Raspberry Pi alarm from anywhere.</p>
-    <div class="button-group">
-        <a href="/login" class="btn">Log In</a>
-        <a href="/register" class="btn btn-outline">Register</a>
-    </div>
-</main>
+<div class="center-wrapper">
+    <main class="intro-section card">
+        <div class="brand-icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+        </div>
+        <h1>Intruder Alert</h1>
+        <p class="text-muted">Welcome to the Intruder Alert home security system. Monitor and control your Raspberry Pi alarm from anywhere.</p>
+        <div class="button-group mt-4">
+            <a href="/login" class="btn btn-primary btn-lg">Log In</a>
+            <a href="/register" class="btn btn-outline btn-lg">Register</a>
+        </div>
+    </main>
+</div>
 
     </div>
 </body>

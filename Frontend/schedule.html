@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intruder Alert | Smart Security</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', path='styles.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        
+<header class="app-header">
+    <div class="brand">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-accent"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        <h2>System Schedule</h2>
+    </div>
+    <div class="user-controls">
+        <a href="/dashboard" class="btn btn-outline btn-sm">← Back to Dashboard</a>
+    </div>
+</header>
+<main class="dashboard-grid justify-center mt-4">
+    <div class="card max-w-md w-100">
+        <div class="section-header">
+            <h3>Global Active Hours</h3>
+        </div>
+        <p class="text-muted text-sm mb-4">Define when your security system should be armed automatically if set to "Schedule" mode.</p>
+        <form action="/schedule" method="post" class="security-form">
+            <div class="form-group">
+                <label for="start_time">Start Time</label>
+                <input type="time" id="start_time" name="start_time" value="{{ schedule.start_time if schedule else '22:00' }}" required>
+            </div>
+            <div class="form-group">
+                <label for="end_time">End Time</label>
+                <input type="time" id="end_time" name="end_time" value="{{ schedule.end_time if schedule else '05:00' }}" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block mt-4">Save Schedule</button>
+        </form>
+    </div>
+</main>
+
+    </div>
+</body>
+</html>

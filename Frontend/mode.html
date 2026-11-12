@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intruder Alert | Security Mode</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', path='styles.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="brand">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-accent"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                <h2>Security Mode</h2>
+            </div>
+            <div class="user-controls">
+                <a href="/dashboard" class="btn btn-outline btn-sm">← Back to Dashboard</a>
+            </div>
+        </header>
+        
+        <main class="dashboard-grid justify-center mt-4">
+            <div class="card max-w-md w-100">
+                <div class="section-header">
+                    <h3>Configure Alarm</h3>
+                </div>
+                <p class="text-muted text-sm mb-4">Set the active security mode for your <strong>Intruder Alarm</strong>.</p>
+                {% set current_mode = schedule.mode if schedule else 'schedule' %}
+
+                <form action="/mode" method="post" class="security-form">
+                    <div class="form-group">
+                        <label for="mode">Security Mode</label>
+                        <select id="mode" name="mode" required>
+                            <option value="schedule" {% if current_mode == 'schedule' %}selected{% endif %}>Schedule (Auto)</option>
+                            <option value="on" {% if current_mode == 'on' %}selected{% endif %}>On (Armed)</option>
+                            <option value="off" {% if current_mode == 'off' %}selected{% endif %}>Off (Disarmed)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block mt-4">Save Mode</button>
+                </form>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

@@ -25,7 +25,7 @@ SECRET_KEY = os.environ["SECRET_KEY"]
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
-# Create database tables
+    # Create database tables
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
@@ -86,6 +86,26 @@ def dashboard_page(
         "dashboard.html",
         {"title": "Dashboard", "user": current_user, "alerts": alerts},
     )
+
+
+@app.get("/mode", include_in_schema=False, name="mode")
+def mode_page(
+    request: Request,
+    db: Annotated[Session, Depends(get_db)],
+    current_user: Annotated[models.User, Depends(get_current_user)],
+):
+    schedule = db.execute(select(models.Schedule)).scalars().first()
+    return templates.TemplateResponse(request, "mode.html", {"title": "Mode", "user": current_user, "schedule": schedule})
+
+
+@app.get("/schedule", include_in_schema=False, name="schedule")
+def schedule_page(
+    request: Request,
+    db: Annotated[Session, Depends(get_db)],
+    current_user: Annotated[models.User, Depends(get_current_user)],
+):
+    schedule = db.execute(select(models.Schedule)).scalars().first()
+    return templates.TemplateResponse(request, "schedule.html", {"title": "Schedule", "user": current_user, "schedule": schedule})
 
 
 def create_access_token(user_id: int):

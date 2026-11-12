@@ -3,17 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Intruder Alert</title>
+    <title>Intruder Alert | Smart Security</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', path='styles.css') }}">
 </head>
 <body>
-    <div class="container">
+    <div class="app-container">
         
-<main class="error-page">
-    <h1 class="error-code">{{ status_code }}</h1>
-    <p class="error-message">{{ message }}</p>
-    <a href="/" class="btn btn-outline">Back Home</a>
-</main>
+<div class="center-wrapper">
+    <main class="card auth-card text-center">
+        <div class="error-icon">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--accent-red)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+        </div>
+        <h1 class="error-code">{{ status_code }}</h1>
+        <p class="error-message">{{ message }}</p>
+        <div class="mt-4">
+            <a href="/dashboard" class="btn btn-outline">Return to Safety</a>
+        </div>
+    </main>
+</div>
 
     </div>
 </body>
