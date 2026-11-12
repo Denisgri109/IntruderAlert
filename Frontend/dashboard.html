@@ -52,10 +52,11 @@
                     <form action="/mode" method="post" class="control-form">
                         <label>Mode</label>
                         <div class="input-group">
+                            {% set current_mode = schedule.mode if schedule else 'schedule' %}
                             <select name="mode" class="flex-1">
-                                <option value="schedule">Schedule</option>
-                                <option value="on">On (Armed)</option>
-                                <option value="off">Off (Disarmed)</option>
+                                <option value="schedule" {% if current_mode == 'schedule' %}selected{% endif %}>Schedule</option>
+                                <option value="on" {% if current_mode == 'on' %}selected{% endif %}>On (Armed)</option>
+                                <option value="off" {% if current_mode == 'off' %}selected{% endif %}>Off (Disarmed)</option>
                             </select>
                             <button type="submit" class="btn btn-outline btn-sm">Set</button>
                         </div>
@@ -64,9 +65,9 @@
                     <form action="/schedule" method="post" class="control-form">
                         <label>Schedule</label>
                         <div class="input-group time-group">
-                            <input type="time" name="start_time" required>
+                            <input type="time" name="start_time" value="{{ schedule.start_time if schedule else '22:00' }}" required>
                             <span class="text-muted">-</span>
-                            <input type="time" name="end_time" required>
+                            <input type="time" name="end_time" value="{{ schedule.end_time if schedule else '05:00' }}" required>
                             <button type="submit" class="btn btn-outline btn-sm">Set</button>
                         </div>
                     </form>

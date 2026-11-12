@@ -80,11 +80,12 @@ def dashboard_page(
 ):
     # one Pi for the whole site, so every logged in user sees the 20 newest alerts
     alerts = db.execute(select(models.Alert).order_by(models.Alert.id.desc()).limit(20)).scalars().all()
+    schedule = db.execute(select(models.Schedule)).scalars().first()
 
     return templates.TemplateResponse(
         request,
         "dashboard.html",
-        {"title": "Dashboard", "user": current_user, "alerts": alerts},
+        {"title": "Dashboard", "user": current_user, "alerts": alerts, "schedule": schedule},
     )
 
 
@@ -106,6 +107,54 @@ def schedule_page(
 ):
     schedule = db.execute(select(models.Schedule)).scalars().first()
     return templates.TemplateResponse(request, "schedule.html", {"title": "Schedule", "user": current_user, "schedule": schedule})
+
+
+# there is only one alarm, so its settings row is made the first time someone saves
+def get_or_create_schedule(db: Session):
+    schedule = db.execute(select(models.Schedule)).scalars().first()
+    if not schedule:
+        schedule = models.Schedule()
+        db.add(schedule)
+    return schedule
+
+
+@app.post("/mode", include_in_schema=False)
+def save_mode(
+    db: Annotated[Session, Depends(get_db)],
+    current_user: Annotated[models.User, Depends(get_current_user)],
+    mode: str = Form(...),
+):
+    if mode not in ("schedule", "on", "off"):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Mode must be schedule, on or off")
+
+    schedule = get_or_create_schedule(db)
+    schedule.mode = mode
+    db.commit()
+    return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
+
+
+@app.post("/schedule", include_in_schema=False)
+def save_schedule(
+    db: Annotated[Session, Depends(get_db)],
+    current_user: Annotated[models.User, Depends(get_current_user)],
+    start_time: str = Form(...),
+    end_time: str = Form(...),
+):
+    # times come from the page as HH:MM, anything else is refused
+    try:
+        datetime.strptime(start_time, "%H:%M")
+        datetime.strptime(end_time, "%H:%M")
+    except ValueError:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Times must be in HH:MM format")
+
+    if start_time == end_time:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Start and end time can't be the same")
+
+    schedule = get_or_create_schedule(db)
+    schedule.start_time = start_time
+    schedule.end_time = end_time
+    db.commit()
+    return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
 
 
 def create_access_token(user_id: int):
